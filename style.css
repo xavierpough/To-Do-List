@@ -1,0 +1,23 @@
+/* The color of the outer cointainer. */
+.container-gray {
+    background: #6f7074;
+}
+
+ /* The color for the textboxes. */
+.container-tasktextbox {
+    background: #38393b;
+}
+
+/* Stops the input section from changing color when inputting tasks. */
+.form-control
+.form-control:active,
+.form-control:focus,
+.form-control:focus:active {
+  background-color: #38393b!important;
+}
+
+ /* The color for the input text box. */
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #aaaaaa;
+    opacity: 1; /* Firefox */
+}

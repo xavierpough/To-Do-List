@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>To-Do List: Bootstrap 5 and Vue.js</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" integrity="sha512-Z/def5z5u2aR89OuzYcxmDJ0Bnd5V1cKqBEbvLOiUNWdg9PQeXVvXLI90SE4QOHGlfLqUnDNVAYyZi8UwUTmWQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+
+    <body>
+        <section class="p-5">
+            <div id="app" class="container-gray container-gray p-3 rounded">
+
+                <h1 class="text-white">To-Do List</h1>
+
+                <div class="d-flex flex-row align-items-center">
+                    <label class="sr-only" for="taskInput">Task</label>
+                    <input v-model="newItem" @keyup.enter="add" type="text" class="form-control tasktextbox border-0 container-tasktextbox text-white" id="taskInput" placeholder="What do you need to do today?">
+                    <button class="btn text-white" @click="add">Add</button>
+                </div>
+
+                <div class="label pt-4">
+                    <h3 class="text-white">Tasks</h3>
+                </div>
+                
+                <ul class="list-group">
+                    <li v-for="(item, index) in filteredItems" :key="index" class="list-group-item container-fluid container-tasktextbox py-1 mb-2 border-0 rounded text-white">
+                        
+                        <!-- Displays tasks -->
+                        <div class="hstack">
+
+                            <div class="col-8">
+                                <!-- If the item has been completed, the task will be striked through. -->
+                                <span :class="{ 'text-decoration-line-through': item.completed }">{{ item.text }}</span> 
+                            </div>
+                            <div class="vr"></div>
+        
+                            <!-- Edit task -->
+                            <div class="ms-auto d-flex flex-row align-items-center">
+                                <button @click="edit(index)" type="submit" class="btn text-white">EDIT</button>
+                            </div>
+        
+                            <!-- Complete task -->
+                            <div class="ms-auto d-flex flex-row align-items-center">
+                                <button @click="complete(index)" type="button" data-toggle="button" class="btn text-white">
+                                    <i class="fa-solid fa-check { 'fa-solid fa-x': item.completed }"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Delete task -->
+                            <div class="ms-auto d-flex flex-row align-items-center">
+                                <button @click="remove(index)" type="submit" class="btn text-white">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Only show uncompleted tasks option -->
+                <label class="form-check-label text-white py-1">
+                    <input type="checkbox" class="form-check-input" v-model="filterUncompleted"> Only show uncompleted tasks.
+                </label>
+
+            </div>
+        </section>
+
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script>
+        const { createApp } = Vue
+            createApp({
+                data() {
+                return {
+                    newItem: '',
+                    items: JSON.parse(localStorage.getItem('items')) || [],
+                    // items: []
+                    filterUncompleted: false,
+                    editedItem: null,
+                }
+                },
+                computed: {
+                    filteredItems() {
+                        if (this.filterUncompleted) {
+                            return this.items.filter(item => !item.completed);
+                        }
+                        return this.items;
+                    },
+                },
+                watch: {
+                    items: {
+                        handler() {
+                            localStorage.setItem('items', JSON.stringify(this.items));
+                        },
+                        deep: true,
+                    },
+                },
+                methods: {
+                add() {
+                    // Add item
+                    if (this.newItem.trim() !== '') {
+                        this.items.push({text: this.newItem, completed: false}); /* Add the new task to the array. */
+                        this.newItem = ''; /* Clear out the task. */
+                    } else {
+                        alert("Please input a valid task."); /* If the user doesn't input text error code.*/
+                    }
+                },
+
+                edit(index) {
+                    // Edit item.
+                    this.editItem = index;
+                    this.newItem = this.items[index].text;
+                },
+
+                complete(index) {
+                    // Mark item as complete
+                    this.items[index].completed = !this.items[index].completed; /* Toggles the item to the opposite value. */
+                },
+                remove(index) {
+                    // Deleted item
+                    this.items.splice(index, 1);
+                    }
+                }
+                // mounted() {
+                //     // Load items from local storage
+                // },
+            }).mount('#app')
+
+        </script>
+    </body>
+
+</html>
